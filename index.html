@@ -37,7 +37,6 @@
                     <div class="layui-input-block">
                         <select name="class" lay-verify="required" id="class">
                             <option value="">请选择一个班级</option>
-                            <option value="1班">1班</option>
                         </select>
                     </div>
                 </div>
@@ -120,6 +119,7 @@
             return false;
         });
     });
+    $.ajax('task_manager.php');
 </script>
 </body>
 </html>
