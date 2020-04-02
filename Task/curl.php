@@ -1,67 +1,35 @@
 <?php
-require 'Core/DB/MySQL/mysql_core.php';
-require 'Core/Data/return_core.php';
-require 'Core/custom_functions.php';
+require __DIR__ . '/../Core/DB/MySQL/mysql_core.php';
+require __DIR__ . '/../Core/Data/return_core.php';
+require __DIR__ . '/../Core/custom_functions.php';
 
 $mysql = new mysql_core();
-
-$headers = array(
-    "Content-type: application/x-www-form-urlencoded",
-    "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Cache-Control: private",
-);
-
-function curl_post($url, $data, $headers, $cookies)
-{
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_HEADER, 0);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl, CURLOPT_COOKIE, "hehejt=yhjl=checked&nj=%B8%DF%D2%BB&mima=g1004&bj=4&username=%B7%EB%EE%DA%DC%F5; ASPSESSIONIDSSQTBBCT=HIFKMAGCEMKMMFPIKBHFMMGO");
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-    $data = curl_exec($curl);
-    curl_close($curl);
-    return $data;
-}
-
-//$post_fields = 'xm=' . urlencode(iconv("utf-8", "gb2312", "冯钰荃")) .
-//    '&nj=' . urlencode(iconv("utf-8", "gb2312", "高一")) .
-//    '&bj=' . urlencode(iconv("utf-8", "gb2312", "4班")) .
-//    '&jtzz=' . urlencode(iconv("utf-8", "gb2312", "地址隐藏")) .
-//    '&sfcx=' . urlencode(iconv("utf-8", "gb2312", "否")) .
-//    '&cxdd=&fhsj=&glts=&gldd=' .
-//    '&mrtw=36.5' .
-//    '&xg=' . urlencode(iconv("utf-8", "gb2312", "提交"));
 
 while (1) {
     $result = $mysql->bind_query('SELECT * FROM name_list');
     for ($i = 0; $i < count($result); $i++) {
-        $post_fields = $post_fields = 'xm=' . urlencode(iconv("utf-8", "gb2312", $result[$i]['name'])) .
-            '&nj=' . urlencode(iconv("utf-8", "gb2312", $result[$i]['grade'])) .
-            '&bj=' . urlencode(iconv("utf-8", "gb2312", $result[$i]['class'])) .
-            '&jtzz=' . urlencode(iconv("utf-8", "gb2312", "地址隐藏")) .
-            '&sfcx=' . urlencode(iconv("utf-8", "gb2312", "否")) .
-            '&cxdd=&fhsj=&glts=&gldd=' .
-            '&mrtw= ' . $result[$i]['tem'] .
-            '&xg=' . urlencode(iconv("utf-8", "gb2312", "提交"));
-        try {
-            $content = iconv('GB2312', 'UTF-8', curl_post(
-                'http://gl.lyd24zx.com/xsyqbb/yqtwsb_add.asp',
-                $post_fields,
-                $headers,
-                urlencode(iconv("utf-8", "gb2312", $result[$i]['name']))));
+        $post_fields = array(
+            'name' => urlencode(iconv("utf-8", "gb2312", $result[$i]['name'])),
+            'class' => urlencode(iconv("utf-8", "gb2312", $result[$i]['class'])),
+            'grade' => urlencode(iconv("utf-8", "gb2312", $result[$i]['grade'])),
+            'tem' => $result[$i]['tem'],
+        );
+        var_dump($post_fields);
+        $arr = null;
+        exec("curl 'http://gl.lyd24zx.com/xsyqbb/yqtwsb_add.asp' -H 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2' --compressed -H 'Content-Type: application/x-www-form-urlencoded' -H 'Origin: http://gl.lyd24zx.com' -H 'Connection: keep-alive' -H 'Referer: http://gl.lyd24zx.com/xsyqbb/yqtwsb.asp?xm1=" . $post_fields['name'] . "&bj1=".$post_fields['class']."&nj1=".$post_fields['grade']."' -H 'Cookie: hehejt=yhjl=checked&nj=".$post_fields['grade']."&mima=g1004&bj=4&username=" . $post_fields['name'] . "; ASPSESSIONIDSSQTBBCT=HIFKMAGCEMKMMFPIKBHFMMGO' -H 'Upgrade-Insecure-Requests: 1' --data 'xm=" . $post_fields['name'] . "&nj=".$post_fields['grade']."&bj=".$post_fields['class']."&jtzz=%B5%D8%D6%B7%D2%FE%B2%D8&sfcx=%B7%F1&cxdd=&fhsj=&glts=&gldd=&mrtw=36.5&xg=%CC%E1%BD%BB'", $arr);
 
-        } catch (Exception $exception) {
-            $content = $exception->getMessage();
-        }
+        $content = '';
+
+        for ($j = 0; $j < count($arr); $j++)
+            $content .= $arr[$j] . "\n";
+
         $mysql->bind_query('INSERT INTO main_logs (name, return_value, time) VALUES (?,?,?)', array(
-            1 => $result[$i]['name'],
-            2 => $content,
+            1 => $result[$i][0],
+            2 => iconv("gb2312", "utf-8", $content),
             3 => time()
         ));
         sleep(1);
     }
-    sleep(3600);
+
+    sleep(120);
 }
