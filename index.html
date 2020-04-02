@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>反体温统计系统</title>
+    <link rel="stylesheet" type="text/css" href="./layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12" >
+            <h1>反体温统计系统</h1>
+            <h3>还在为早起体温发愁?还在被班主任支配?快试试这款强大的反体温统计系统,一次提交,全自动填报体温.<br>----Project Created By Ender. 2020-04-02</h3>
+            <form class="layui-form layui-form-pane" style="max-width: 500px; margin-left: auto; margin-right: auto">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">名字</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" required lay-verify="required" placeholder="请输入名字"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">年级</label>
+                    <div class="layui-input-block">
+                        <select name="grade" lay-verify="required">
+                            <option value="">请选择一个年级</option>
+                            <option value="高一">高一</option>
+                            <option value="高二">高二</option>
+                            <option value="高三">高三</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">班级</label>
+                    <div class="layui-input-block">
+                        <select name="class" lay-verify="required" id="class">
+                            <option value="">请选择一个班级</option>
+                            <option value="1班">1班</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">体温</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="tem" required lay-verify="required" placeholder="我劝你善良"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="jquery-3.4.1.js"></script>
+<script src="layui/layui.js"></script>
+<script>
+    for (let i = 1; i <= 35; i++) {
+        $("#class").append(`
+        <option value="` + i + `班">` + i + `班</option>
+        `);
+    }
+    layui.use('form', function () {
+        let form = layui.form;
+
+        form.on('submit(formDemo)', function (data) {
+            let json = data.field;
+                $.ajax({
+                url: 'api.php',
+                type: "POST",
+                dataType: 'json',
+                async: false,
+                timeout: 5000,
+                data: json,
+                tryCount: 0,
+                retryLimit: 5,
+                success: function (result) {
+                    let json = eval(result);
+                    switch (json['code']) {
+                        case 100:
+                            layui.use('layer', function () {
+                                let layer = layui.layer;
+                                layer.open({
+                                    title: 'ok,完事了',
+                                    content: 'ok,交上了,您现在爽了,点确定刷新当前页面',
+                                    yes: function (index) {
+                                        window.location.reload();
+                                        layer.close(index);
+                                    }
+                                });
+                            });
+                            break;
+                        case 207:
+                            layer.msg('此用户禁止访问!别想搞事情');
+                            break;
+                        default:
+                            layer.msg('奇怪的错误增加了,给Ender说下');
+                    }
+                },
+                error: function () {
+                    if (this.tryCount < this.retryLimit) {
+                        this.tryCount++;
+                        $.ajax(this);
+                    } else {
+                        layui.use('layer', function () {
+                            let layer = layui.layer;
+                            layer.msg('连接服务器超时,请检查您的网络连接后重试')
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
