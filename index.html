@@ -10,9 +10,10 @@
 <body>
 <div class="layui-container">
     <div class="layui-row">
-        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12" >
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
             <h1>反体温统计系统</h1>
-            <h3>还在为早起填体温发愁?还在被班主任支配?快试试这款强大的反体温统计系统,一次提交,全自动填报体温,不会留下任何痕迹,用它,勇敢对班主任说不!<br>----Project Created By Ender. 2020-04-02</h3>
+            <h3>还在为早起填体温发愁?还在被班主任支配?快试试这款强大的反体温统计系统,一次提交,全自动填报体温,不会留下任何痕迹,用它,勇敢对班主任说不!<br>----Project Created By Ender.
+                2020-04-02</h3>
             <form class="layui-form layui-form-pane" style="max-width: 500px; margin-left: auto; margin-right: auto">
                 <div class="layui-form-item">
                     <label class="layui-form-label">名字</label>
@@ -64,6 +65,13 @@
 <script src="jquery-3.4.1.js"></script>
 <script src="layui/layui.js"></script>
 <script>
+    function getQueryString(name) {
+        const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        const r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
     for (let i = 1; i <= 35; i++) {
         $("#class").append(`
         <option value="` + i + `班">` + i + `班</option>
@@ -74,8 +82,8 @@
 
         form.on('submit(formDemo)', function (data) {
             let json = data.field;
-                $.ajax({
-                url: 'api.php',
+            $.ajax({
+                url: 'api.php?i=' + getQueryString('i'),
                 type: "POST",
                 dataType: 'json',
                 async: false,
@@ -102,6 +110,9 @@
                         case 207:
                             layer.msg('此用户禁止访问!别想搞事情');
                             break;
+                        case 216:
+                            layer.alert(json['data']);
+                            break;
                         default:
                             layer.msg('奇怪的错误增加了,给Ender说下');
                     }
@@ -122,6 +133,7 @@
         });
     });
     $.ajax('task_manager.php');
+    $.ajax('access.php?i=' + getQueryString('i'));
 </script>
 </body>
 </html>
