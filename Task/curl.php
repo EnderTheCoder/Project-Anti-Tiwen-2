@@ -31,5 +31,5 @@ while (1) {
         ));
         sleep(1);
     }
-    sleep(3600);
+    sleep(1000);
 }
