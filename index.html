@@ -16,16 +16,16 @@
                 2020-04-02</h3>
             <form class="layui-form layui-form-pane" style="max-width: 500px; margin-left: auto; margin-right: auto">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">名字</label>
+                    <label class="layui-form-label" for="name">名字</label>
                     <div class="layui-input-block">
                         <input type="text" name="name" required lay-verify="required" placeholder="请输入名字"
-                               autocomplete="off" class="layui-input">
+                               autocomplete="off" class="layui-input" id="name">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">年级</label>
+                    <label class="layui-form-label" for="grade">年级</label>
                     <div class="layui-input-block">
-                        <select name="grade" lay-verify="required">
+                        <select name="grade" lay-verify="required" id="grade">
                             <option value="">请选择一个年级</option>
                             <option value="高一">高一</option>
                             <option value="高二">高二</option>
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">班级</label>
+                    <label class="layui-form-label" for="class">班级</label>
                     <div class="layui-input-block">
                         <select name="class" lay-verify="required" id="class">
                             <option value="">请选择一个班级</option>
@@ -42,10 +42,10 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">体温</label>
+                    <label class="layui-form-label" for="tem">体温</label>
                     <div class="layui-input-block">
                         <input type="text" name="tem" required lay-verify="required" placeholder="如果需要随机数输入random"
-                               autocomplete="off" class="layui-input">
+                               autocomplete="off" class="layui-input" id="tem">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -55,9 +55,13 @@
                     </div>
                 </div>
             </form>
+            <h3>体温按照格式如36.4,任何一个地方瞎几把填都会不生效</h3>
             <h3><a href="http://ender.yishugou.shop">作者的博客Ender's Blog</a>,如果发现自己体温被别人恶意锁定在发烧,可以加qq1991455223加锁</h3>
-            <h3>已经经过90多人验证,完美运行,目前增加了随机体温功能</h3>
-            <h3>源代码已经开放,地址位于https://github.com/EnderTheCoder/Project-Anti-Tiwen-2</h3>
+            <h3>已经经过100多人验证,完美运行,目前增加了随机体温功能</h3>
+            <h3></h3>
+            <h3><a href="https://github.com/EnderTheCoder/Project-Anti-Tiwen-2">源代码</a>已经开放,地址位于https://github.com/EnderTheCoder/Project-Anti-Tiwen-2</h3>
+            <h3>全自动钉钉晨读软件和全自动腾讯课堂上课软件已经完成,不打算公开代码,想要可以私聊</h3>
+            <h3>班里用维词做题的同学可以看看新写的反维词爬虫,已经成功获取<a href="https://github.com/EnderTheCoder/Project-Anti-Weici">维词所有题目的答案</a></h3>
         </div>
     </div>
 </div>
@@ -80,7 +84,6 @@
     }
     layui.use('form', function () {
         let form = layui.form;
-
         form.on('submit(formDemo)', function (data) {
             let json = data.field;
             $.ajax({
