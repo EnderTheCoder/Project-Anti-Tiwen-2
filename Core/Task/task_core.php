@@ -23,12 +23,22 @@ class task_core
         $sql = 'UPDATE main_tasks SET pid = ? WHERE id = ?';
         $params = array(1 => $pid, 2 => $id);
         $mysql->bind_query($sql, $params);
+        $mysql->bind_query('UPDATE main_tasks SET update_time = ? WHERE id = ?', array(
+            1 => time(),
+            2 => $id,
+        ));
     }
 
     public function create_($task_name, $file_name, $info)
     {
-        $sql = 'INSERT INTO main_tasks (task_name, file_name, info) VALUES (?, ?, ?)';
-        $params = array(1 => $task_name, 2 => $file_name, $info);
+        $sql = 'INSERT INTO main_tasks (task_name, file_name, info, create_time, update_time) VALUES (?, ?, ?, ?, ?)';
+        $params = array(
+            1 => $task_name,
+            2 => $file_name,
+            3 => $info,
+            4 => time(),
+            5 => time(),
+            );
         $mysql = new mysql_core();
         $mysql->bind_query($sql, $params);
         return $mysql->getId();

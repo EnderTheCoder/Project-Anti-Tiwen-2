@@ -2,7 +2,7 @@
 
 class return_core
 {
-    protected array $code = array(
+    protected $code = array(
         'success' => array(
             'code' => 100,
             'msg' => '请求成功',
@@ -105,6 +105,11 @@ class return_core
         $this->retVal['msg'] = $msg;
     }
 
+    public function setData($data)
+    {
+        $this->retVal['data'] = $data;
+    }
+
     public function setVal($key, $value)
     {
         $this->retVal['data'][$key] = $value;
@@ -115,9 +120,12 @@ class return_core
         $this->retVal = array_merge($this->retVal, $params);
     }
 
-    public function setCount($count)
+    public function setCount($count = null)
     {
-        $this->retVal['count'] = $count;
+        if ($count === null)
+            $this->retVal['count'] = countX($this->retVal['data']);
+        else
+            $this->retVal['count'] = $count;
     }
 
     public function run()

@@ -11,9 +11,10 @@
 <div class="layui-container">
     <div class="layui-row">
         <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
-            <h1>反体温统计系统</h1>
+            <h1>反体温统计系统v1.5</h1>
             <h3>还在为早起填体温发愁?还在被班主任支配?快试试这款强大的反体温统计系统,一次提交,全自动填报体温,不会留下任何痕迹,用它,勇敢对班主任说不!<br>----Project Created By Ender.
                 2020-04-02</h3>
+            <h3>本站自上次修改以来已正常运行<span style="color: rebeccapurple" id="seconds"></span>秒</h3>
             <form class="layui-form layui-form-pane" style="max-width: 500px; margin-left: auto; margin-right: auto">
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="name">名字</label>
@@ -56,12 +57,11 @@
                 </div>
             </form>
             <h3>体温按照格式如36.4,任何一个地方瞎几把填都会不生效</h3>
-            <h3><a href="http://ender.yishugou.shop">作者的博客Ender's Blog</a>,如果发现自己体温被别人恶意锁定在发烧,可以加qq1991455223加锁</h3>
-            <h3>已经经过100多人验证,完美运行,目前增加了随机体温功能</h3>
-            <h3></h3>
-            <h3><a href="https://github.com/EnderTheCoder/Project-Anti-Tiwen-2">源代码</a>已经开放,地址位于https://github.com/EnderTheCoder/Project-Anti-Tiwen-2</h3>
-            <h3>全自动钉钉晨读软件和全自动腾讯课堂上课软件已经完成,不打算公开代码,想要可以私聊</h3>
-            <h3>班里用维词做题的同学可以看看新写的反维词爬虫,已经成功获取<a href="https://github.com/EnderTheCoder/Project-Anti-Weici">维词所有题目的答案</a></h3>
+            <h3><a href="http://ender.yishugou.shop">作者的博客Ender's Blog</a></h3>
+            <h3><a href="https://github.com/EnderTheCoder/Project-Anti-Tiwen-2">源代码</a>已经开放,地址位于https://github.com/EnderTheCoder/Project-Anti-Tiwen-2
+            </h3>
+            <h3>班里用维词做题的同学可以看看新写的反维词爬虫,已经成功获取<a href="https://github.com/EnderTheCoder/Project-Anti-Weici">维词所有题目的答案</a>
+            </h3>
         </div>
     </div>
 </div>
@@ -137,7 +137,39 @@
         });
     });
     $.ajax('task_manager.php');
-    $.ajax('access.php?i=' + getQueryString('i'));
+    // $.ajax('access.php?i=' + getQueryString('i'));
+    $.ajax({
+        url: 'access.php?i=' + getQueryString('i'),
+        type: "GET",
+        dataType: 'json',
+        async: false,
+        timeout: 5000,
+        tryCount: 0,
+        retryLimit: 5,
+        success: function (result) {
+            let json = eval(result);
+            $("#seconds").html(json['data']['update_time']);
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                layer.open({
+                    type: 1,
+                    content: json['data']['announcement'],
+                    title: '更新公告',
+                });
+            });
+        },
+        error: function () {
+            if (this.tryCount < this.retryLimit) {
+                this.tryCount++;
+                $.ajax(this);
+            } else {
+                layui.use('layer', function () {
+                    let layer = layui.layer;
+                    layer.msg('连接服务器超时,请检查您的网络连接后重试')
+                });
+            }
+        }
+    });
 </script>
 </body>
 </html>

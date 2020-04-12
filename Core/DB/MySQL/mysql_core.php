@@ -132,6 +132,12 @@ class mysql_core
         return $conn->lastInsertId();
     }
 
+    public function getCount($tableName)
+    {
+        $result = $this->bind_query("SELECT COUNT(*) FROM {$tableName}");
+        return $result[0][0];
+    }
+
     //关闭数据库连接
     public function close()
     {
