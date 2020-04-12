@@ -31,9 +31,10 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 
 //更新用户访问数和agent
 
-    $mysql->bind_query('UPDATE main_white_list SET cnt = cnt + 1, http_user_agent = ? WHERE ip_addr = ?', array(
+    $mysql->bind_query('UPDATE main_white_list SET cnt = cnt + 1, http_user_agent = ?, update_time = ? WHERE ip_addr = ?', array(
         1 => $_SERVER['HTTP_USER_AGENT'],
-        2 => $_SERVER['REMOTE_ADDR']
+        2 => time(),
+        3 => $_SERVER['REMOTE_ADDR']
     ));
 }
 
